@@ -115,16 +115,22 @@ npm run test:watch
 This project uses GitHub Actions for automated testing and deployment:
 
 ### 🧪 Continuous Integration
-- **Automated Testing**: Runs on all PRs and pushes to `main`/`develop`
+- **Automated Testing**: Runs on all PRs and pushes to `main`
 - **Multi-Node Testing**: Tests against Node.js 18 and 20
 - **Code Quality**: ESLint, TypeScript compilation, and test coverage
 - **Coverage Reporting**: Integrated with Codecov
 
 ### 🚀 Continuous Deployment
-- **Staging**: Auto-deploys `develop` branch to staging environment
+- **Preview Deployments**: Automatic preview URLs for every PR
 - **Production**: Auto-deploys `main` branch to production
 - **Manual Deployment**: Workflow dispatch for on-demand deployments
-- **Smoke Testing**: Automated health checks after deployment
+- **Zero Complexity**: No separate staging environments to manage
+
+### ⚡ Cloudflare Workers Preview System
+- **Unique URLs**: Each PR gets its own preview URL (e.g., `branch-name.your-worker.workers.dev`)
+- **Automatic Updates**: Preview updates with every commit to the PR
+- **Isolated Testing**: Each PR runs independently without conflicts
+- **No Setup Required**: Uses Cloudflare's built-in preview functionality
 
 ### Required Secrets
 Configure these in your GitHub repository settings:
@@ -132,8 +138,7 @@ Configure these in your GitHub repository settings:
 ```bash
 CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
 CLOUDFLARE_ACCOUNT_ID=your_account_id
-CLOUDFLARE_SUBDOMAIN=your_subdomain  # Optional
-CODECOV_TOKEN=your_codecov_token      # Optional
+CODECOV_TOKEN=your_codecov_token      # Optional for coverage reporting
 ```
 
 ## Configuration
@@ -141,19 +146,26 @@ CODECOV_TOKEN=your_codecov_token      # Optional
 Edit `wrangler.toml` to configure:
 - KV namespace bindings
 - Rate limiting parameters
-- Environment-specific settings
 
 ### Environment Setup
 1. Create KV namespaces in Cloudflare Dashboard:
    ```bash
-   # Production
-   wrangler kv:namespace create "REACTIONS" --env production
-   wrangler kv:namespace create "RATE_LIMITS" --env production
+   # Production namespaces
+   wrangler kv:namespace create "REACTIONS"
+   wrangler kv:namespace create "RATE_LIMITS"
    
-   # Staging
-   wrangler kv:namespace create "REACTIONS" --env staging
-   wrangler kv:namespace create "RATE_LIMITS" --env staging
+   # Preview namespaces (for PR testing)
+   wrangler kv:namespace create "REACTIONS" --preview
+   wrangler kv:namespace create "RATE_LIMITS" --preview
    ```
 
-2. Update namespace IDs in `wrangler.toml`
+2. Update namespace IDs in `wrangler.toml`:
+   - `id` = production namespace ID
+   - `preview_id` = preview namespace ID
+
 3. Deploy: `npm run deploy`
+
+### How Preview Deployments Work
+- **PRs**: Automatically get unique preview URLs using preview KV namespaces
+- **Production**: Uses production KV namespaces with persistent data
+- **Isolation**: Preview and production data are completely separate

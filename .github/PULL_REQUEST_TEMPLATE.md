@@ -43,28 +43,25 @@ npm run build
 - [ ] CORS headers properly configured
 - [ ] SQL injection prevention (if applicable)
 
-## Deployment Checklist
-- [ ] Staging deployment successful
-- [ ] Smoke tests passed
+## Preview Deployment Checklist
+- [ ] Preview deployment successful (check PR comments)
+- [ ] Tested functionality using preview URL
 - [ ] No breaking changes to existing API
-- [ ] Environment variables documented
+- [ ] Environment variables documented (if any)
 
 ## Screenshots/Examples (if applicable)
 <!-- Add screenshots or examples of the changes -->
 
-## Staging URL
-If deployed to staging, provide the URL for testing:
-```
-https://openheart-reactions-api-staging.your-subdomain.workers.dev
-```
+## Preview Testing
+The preview URL will be automatically posted in PR comments once the deployment completes. Test your changes there before requesting review.
 
 ## Additional Notes
 <!-- Any additional information, concerns, or questions -->
 
 ---
 
-**Reviewer Notes:**
-- [ ] Code review completed
-- [ ] Tests reviewed and approved
-- [ ] Documentation updated if needed
-- [ ] Staging deployment validated
+**Self-Review Checklist:**
+- [ ] Code changes reviewed and tested
+- [ ] All automated checks passing
+- [ ] Preview deployment tested thoroughly
+- [ ] Ready for production deployment

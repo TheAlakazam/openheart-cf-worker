@@ -60,29 +60,25 @@ When you open a PR, GitHub Actions will automatically:
 - ✅ Generate coverage report
 - ✅ Test Wrangler configuration
 
-### 7. Staging Deployment
+### 7. Preview Deployment
 
-**Option 1: Automatic (develop branch)**
-- Merge your PR to `develop` branch
-- Staging deployment happens automatically
+**Automatic for all PRs:**
+- Every PR automatically gets a unique preview URL
+- Preview updates with each new commit
+- Test your changes at the preview URL provided in PR comments
 
-**Option 2: Manual (PR label)**
-- Add `deploy:staging` label to your PR
-- Staging deployment will trigger automatically
-
-### 8. Code Review Process
+### 8. Development Process
 
 1. **Automated Checks**: Must pass all CI checks
-2. **Code Review**: At least one maintainer approval required
-3. **Testing**: Verify functionality in staging environment
-4. **Merge**: Squash and merge to `main` for production
+2. **Preview Testing**: Verify functionality using the preview URL
+3. **Self-Review**: Test your changes thoroughly in the preview environment
+4. **Merge**: Squash and merge to `main` for production deployment
 
 ## Branch Strategy
 
 - `main` - Production environment (auto-deploys)
-- `develop` - Staging environment (auto-deploys)
-- `feature/*` - Feature branches (tested on PR)
-- `hotfix/*` - Emergency fixes (direct to main)
+- `feature/*` - Feature branches (get preview URLs on PR)
+- `hotfix/*` - Emergency fixes (direct to main with preview testing)
 
 ## Coding Standards
 

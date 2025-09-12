@@ -1,24 +1,15 @@
-name: Deploy to Cloudflare Workers
+name: Deploy to Production
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-          - production
-          - staging
 
 jobs:
   deploy:
-    name: Deploy to Cloudflare Workers
+    name: Deploy to Production
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'production' }}
+    environment: production
 
     steps:
       - name: Checkout code
@@ -44,16 +35,16 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --env ${{ github.event.inputs.environment || 'production' }}
+          command: deploy
 
       - name: Notify deployment success
         if: success()
         run: |
-          echo "✅ Successfully deployed to ${{ github.event.inputs.environment || 'production' }} environment"
-          echo "🚀 OpenHeart API is live at: https://openheart-reactions-api.${{ secrets.CLOUDFLARE_SUBDOMAIN || 'your-subdomain' }}.workers.dev"
+          echo "✅ Successfully deployed to production"
+          echo "🚀 OpenHeart API is live at: https://openheart-reactions-api.piyushjaipuriyar.workers.dev"
 
       - name: Notify deployment failure
         if: failure()
         run: |
-          echo "❌ Deployment to ${{ github.event.inputs.environment || 'production' }} failed"
+          echo "❌ Production deployment failed"
           echo "Please check the logs above for error details"
