@@ -1,0 +1,37 @@
+{
+  "name": "openheart-cf-worker",
+  "version": "1.0.0",
+  "description": "OpenHeart reaction system API built with Cloudflare Workers",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler publish",
+    "build": "tsc",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "@typescript-eslint/eslint-plugin": "8.43.0",
+    "@typescript-eslint/parser": "8.43.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "eslint": "^9.35.0",
+    "miniflare": "^3.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0",
+    "wrangler": "4.35.0"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "api",
+    "reactions",
+    "serverless"
+  ],
+  "author": "Piyush Jaipuriyar",
+  "homepage": "https://github.com/piyushjaipuriyar/openheart-cf-worker",
+  "license": "MIT"
+}

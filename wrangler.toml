@@ -1,0 +1,30 @@
+name = "openheart-reactions-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+kv_namespaces = [
+  { binding = "REACTIONS", id = "your-kv-namespace-id", preview_id = "your-kv-preview-id" },
+  { binding = "RATE_LIMITS", id = "your-rate-limit-namespace-id", preview_id = "your-rate-limit-preview-id" }
+]
+
+[env.staging]
+kv_namespaces = [
+  { binding = "REACTIONS", id = "your-staging-kv-namespace-id", preview_id = "your-staging-kv-preview-id" },
+  { binding = "RATE_LIMITS", id = "your-staging-rate-limit-namespace-id", preview_id = "your-staging-rate-limit-preview-id" }
+]
+
+# Development environment uses local KV
+[[kv_namespaces]]
+binding = "REACTIONS"
+preview_id = "local-reactions"
+
+[[kv_namespaces]]
+binding = "RATE_LIMITS"
+preview_id = "local-rate-limits"
+
+[vars]
+# Rate limiting configuration
+MAX_REACTIONS_PER_POST_PER_DAY = "3"
+MAX_REACTIONS_PER_IP_PER_HOUR = "10"
+REACTION_COOLDOWN_SECONDS = "0.5"
