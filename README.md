@@ -116,9 +116,9 @@ This project uses GitHub Actions for automated testing and deployment:
 
 ### 🧪 Continuous Integration
 - **Automated Testing**: Runs on all PRs and pushes to `main`
-- **Multi-Node Testing**: Tests against Node.js 18 and 20
 - **Code Quality**: ESLint, TypeScript compilation, and test coverage
 - **Coverage Reporting**: Integrated with Codecov
+- **Runtime Agnostic**: Tests focus on Cloudflare Workers compatibility
 
 ### 🚀 Continuous Deployment
 - **Preview Deployments**: Automatic preview URLs for every PR
