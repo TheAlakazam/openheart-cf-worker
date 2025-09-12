@@ -1,0 +1,442 @@
+openapi: 3.1.0
+info:
+  title: OpenHeart Reactions API
+  description: |
+    A high-performance serverless API for managing post reactions built with Cloudflare Workers.
+    
+    ## Features
+    - **Global Performance**: Sub-200ms response times worldwide
+    - **Rate Limiting**: Multi-tier rate limiting with IP-based tracking
+    - **Spam Prevention**: Built-in protection against reaction abuse
+    - **Real-time Reactions**: Support for 5 reaction types
+    
+    ## Rate Limiting Rules
+    - **Per Post**: 3 reactions per post per IP per day
+    - **Global**: 10 reactions per IP per hour globally
+    - **Cooldown**: 0.5-second cooldown between reactions
+    
+    ## Reaction Types
+    - `heart` - Love/Like reaction
+    - `lightbulb` - Insightful/Great idea
+    - `fire` - Amazing/Impressive
+    - `thinking` - Thought-provoking
+    - `hundred` - Perfect/100% agree
+  version: 1.0.0
+  contact:
+    name: Piyush Jaipuriyar
+    url: https://github.com/piyushjaipuriyar/openheart-cf-worker
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://openheart-reactions-api.piyushjaipuriyar.workers.dev
+    description: Production server
+  - url: https://openheart-reactions-api.{branch-name}.piyushjaipuriyar.workers.dev
+    description: Preview server (replace {branch-name} with actual branch)
+
+paths:
+  /reactions/{slug}:
+    get:
+      summary: Get reaction counts for a post
+      description: |
+        Retrieves the current reaction counts for a specific post slug.
+        Returns default counts (all zeros) if the post has no reactions yet.
+      operationId: getReactions
+      tags:
+        - Reactions
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Unique identifier for the post (alphanumeric, hyphens, underscores only)
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9_-]+$'
+            maxLength: 100
+            example: "my-awesome-blog-post"
+      responses:
+        '200':
+          description: Reaction counts retrieved successfully
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: "*"
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: "GET, POST, OPTIONS"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionData'
+              examples:
+                new_post:
+                  summary: New post with no reactions
+                  value:
+                    postSlug: "my-awesome-blog-post"
+                    reactions:
+                      heart: 0
+                      lightbulb: 0
+                      fire: 0
+                      thinking: 0
+                      hundred: 0
+                    lastUpdated: "2024-01-01T12:00:00.000Z"
+                popular_post:
+                  summary: Popular post with many reactions
+                  value:
+                    postSlug: "viral-tech-article"
+                    reactions:
+                      heart: 245
+                      lightbulb: 89
+                      fire: 156
+                      thinking: 34
+                      hundred: 78
+                    lastUpdated: "2024-01-01T15:30:45.123Z"
+        '400':
+          description: Bad request - invalid slug format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "BAD_REQUEST"
+                message: "Invalid post slug format"
+                statusCode: 400
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "INTERNAL_SERVER_ERROR"
+                message: "Failed to retrieve reactions"
+                statusCode: 500
+
+    post:
+      summary: Add a reaction to a post
+      description: |
+        Adds a single reaction to a post. Subject to rate limiting rules:
+        - Maximum 3 reactions per post per IP per day
+        - Maximum 10 reactions per IP per hour globally
+        - 0.5-second cooldown between reactions
+      operationId: addReaction
+      tags:
+        - Reactions
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Unique identifier for the post
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9_-]+$'
+            maxLength: 100
+            example: "my-awesome-blog-post"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReactionRequest'
+            examples:
+              heart_reaction:
+                summary: Add a heart reaction
+                value:
+                  reaction: "heart"
+              lightbulb_reaction:
+                summary: Add a lightbulb reaction
+                value:
+                  reaction: "lightbulb"
+              fire_reaction:
+                summary: Add a fire reaction
+                value:
+                  reaction: "fire"
+              thinking_reaction:
+                summary: Add a thinking reaction
+                value:
+                  reaction: "thinking"
+              hundred_reaction:
+                summary: Add a hundred reaction
+                value:
+                  reaction: "hundred"
+      responses:
+        '201':
+          description: Reaction added successfully
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: "*"
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: "GET, POST, OPTIONS"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionResponse'
+              example:
+                success: true
+                reactions:
+                  heart: 16
+                  lightbulb: 8
+                  fire: 3
+                  thinking: 12
+                  hundred: 7
+                message: "heart reaction added successfully"
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_reaction_type:
+                  summary: Invalid reaction type
+                  value:
+                    error: "BAD_REQUEST"
+                    message: "Invalid reaction type. Allowed: heart, lightbulb, fire, thinking, hundred"
+                    statusCode: 400
+                missing_content_type:
+                  summary: Missing content type
+                  value:
+                    error: "BAD_REQUEST"
+                    message: "Content-Type must be application/json"
+                    statusCode: 400
+                invalid_json:
+                  summary: Invalid JSON
+                  value:
+                    error: "BAD_REQUEST"
+                    message: "Invalid JSON in request body"
+                    statusCode: 400
+        '429':
+          description: Rate limit exceeded
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+                description: Seconds until the rate limit resets
+                example: 1800
+            X-RateLimit-Reset:
+              schema:
+                type: string
+                format: date-time
+                description: ISO timestamp when the rate limit resets
+                example: "2024-01-01T16:00:00.000Z"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                cooldown_active:
+                  summary: Cooldown period active
+                  value:
+                    error: "TOO_MANY_REQUESTS"
+                    message: "Cooldown active. Please wait 0.5 seconds between reactions."
+                    statusCode: 429
+                daily_post_limit:
+                  summary: Daily post limit exceeded
+                  value:
+                    error: "TOO_MANY_REQUESTS"
+                    message: "Daily limit exceeded for this post. You can add 3 reactions per post per day."
+                    statusCode: 429
+                hourly_global_limit:
+                  summary: Hourly global limit exceeded
+                  value:
+                    error: "TOO_MANY_REQUESTS"
+                    message: "Hourly limit exceeded. You can add 10 reactions per hour globally."
+                    statusCode: 429
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "INTERNAL_SERVER_ERROR"
+                message: "Failed to add reaction"
+                statusCode: 500
+
+    options:
+      summary: CORS preflight request
+      description: Handle CORS preflight requests for cross-origin access
+      operationId: corsPreflightReactions
+      tags:
+        - CORS
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: CORS preflight response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: "*"
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                example: "GET, POST, OPTIONS"
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+                example: "Content-Type, Authorization"
+            Access-Control-Max-Age:
+              schema:
+                type: string
+                example: "86400"
+
+  /:
+    get:
+      summary: API information
+      description: Returns basic API information and available endpoints
+      operationId: getApiInfo
+      tags:
+        - General
+      responses:
+        '404':
+          description: API endpoint not found with helpful information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "NOT_FOUND"
+                message: "API endpoint not found. Available routes: GET /reactions/:slug, POST /reactions/:slug"
+                statusCode: 404
+
+components:
+  schemas:
+    ReactionData:
+      type: object
+      required:
+        - postSlug
+        - reactions
+        - lastUpdated
+      properties:
+        postSlug:
+          type: string
+          description: Unique identifier for the post
+          example: "my-awesome-blog-post"
+        reactions:
+          $ref: '#/components/schemas/ReactionCounts'
+        lastUpdated:
+          type: string
+          format: date-time
+          description: ISO timestamp of when reactions were last updated
+          example: "2024-01-01T12:00:00.000Z"
+
+    ReactionCounts:
+      type: object
+      required:
+        - heart
+        - lightbulb
+        - fire
+        - thinking
+        - hundred
+      properties:
+        heart:
+          type: integer
+          minimum: 0
+          description: Number of heart reactions
+          example: 15
+        lightbulb:
+          type: integer
+          minimum: 0
+          description: Number of lightbulb reactions
+          example: 8
+        fire:
+          type: integer
+          minimum: 0
+          description: Number of fire reactions
+          example: 3
+        thinking:
+          type: integer
+          minimum: 0
+          description: Number of thinking reactions
+          example: 12
+        hundred:
+          type: integer
+          minimum: 0
+          description: Number of hundred reactions
+          example: 7
+
+    ReactionRequest:
+      type: object
+      required:
+        - reaction
+      properties:
+        reaction:
+          type: string
+          enum:
+            - heart
+            - lightbulb
+            - fire
+            - thinking
+            - hundred
+          description: Type of reaction to add
+          example: "heart"
+
+    ReactionResponse:
+      type: object
+      required:
+        - success
+        - reactions
+      properties:
+        success:
+          type: boolean
+          description: Whether the reaction was added successfully
+          example: true
+        reactions:
+          $ref: '#/components/schemas/ReactionCounts'
+        message:
+          type: string
+          description: Success message describing what happened
+          example: "heart reaction added successfully"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - statusCode
+      properties:
+        error:
+          type: string
+          description: Error code identifier
+          enum:
+            - BAD_REQUEST
+            - UNAUTHORIZED
+            - FORBIDDEN
+            - NOT_FOUND
+            - METHOD_NOT_ALLOWED
+            - TOO_MANY_REQUESTS
+            - INTERNAL_SERVER_ERROR
+          example: "BAD_REQUEST"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Invalid reaction type. Allowed: heart, lightbulb, fire, thinking, hundred"
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+
+tags:
+  - name: Reactions
+    description: Operations for managing post reactions
+  - name: CORS
+    description: Cross-Origin Resource Sharing support
+  - name: General
+    description: General API operations
+
+externalDocs:
+  description: GitHub Repository
+  url: https://github.com/piyushjaipuriyar/openheart-cf-worker

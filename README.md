@@ -6,6 +6,17 @@
 
 A high-performance serverless API for managing post reactions built with Cloudflare Workers and KV storage.
 
+## 📋 API Documentation
+
+- **OpenAPI Specification**: [`openapi.yaml`](./openapi.yaml) - Complete API documentation
+- **Hoppscotch Collection**: [`hoppscotch-collection.json`](./hoppscotch-collection.json) - Ready-to-import collection for testing
+
+### Quick Test with Hoppscotch
+1. Go to [hoppscotch.io](https://hoppscotch.io)
+2. Import → **OpenAPI** → Upload `openapi.yaml` **OR**
+3. Import → **Hoppscotch** → Upload `hoppscotch-collection.json`
+4. Set environment variables and start testing!
+
 ## Features
 
 - **Global Performance**: Sub-200ms response times worldwide via Cloudflare's edge network
@@ -148,22 +159,29 @@ Edit `wrangler.toml` to configure:
 - Rate limiting parameters
 
 ### Environment Setup
-1. Create KV namespaces in Cloudflare Dashboard:
+
+**Quick Setup (Recommended):**
+```bash
+# Install and login to Wrangler
+npm install -g wrangler
+wrangler login
+
+# Run the setup script
+./scripts/setup-kv.sh
+```
+
+**Manual Setup:**
+1. Create KV namespaces:
    ```bash
-   # Production namespaces
    wrangler kv:namespace create "REACTIONS"
-   wrangler kv:namespace create "RATE_LIMITS"
-   
-   # Preview namespaces (for PR testing)
    wrangler kv:namespace create "REACTIONS" --preview
+   wrangler kv:namespace create "RATE_LIMITS"
    wrangler kv:namespace create "RATE_LIMITS" --preview
    ```
 
-2. Update namespace IDs in `wrangler.toml`:
-   - `id` = production namespace ID
-   - `preview_id` = preview namespace ID
-
-3. Deploy: `npm run deploy`
+2. Update `wrangler.toml` with the returned namespace IDs
+3. Uncomment deployment steps in GitHub Actions workflows
+4. Deploy: `npm run deploy`
 
 ### How Preview Deployments Work
 - **PRs**: Automatically get unique preview URLs using preview KV namespaces

@@ -9,8 +9,8 @@ on:
     # Allow other workflows to call this one
 
 jobs:
-  test:
-    name: Run Tests
+  test-and-preview:
+    name: Test & Deploy Preview
     runs-on: ubuntu-latest
 
     steps:
@@ -36,6 +36,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload coverage reports to Codecov
+        if: github.event_name == 'pull_request'
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -44,75 +45,44 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: false
 
-  preview-deployment:
-    name: Deploy Preview (PRs only)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    needs: [test]
-    environment: preview
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # Uncomment when KV namespaces are configured:
+      # - name: Validate wrangler.toml
+      #   run: npx wrangler deploy --dry-run
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
+      # Uncomment when ready to deploy previews:
+      # - name: Deploy Preview (PRs only)
+      #   if: github.event_name == 'pull_request'
+      #   uses: cloudflare/wrangler-action@v3
+      #   id: deploy-preview
+      #   with:
+      #     apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      #     accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      #     command: deploy --compatibility-date=2024-01-01
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Deploy Preview
-        uses: cloudflare/wrangler-action@v3
-        id: deploy-preview
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --compatibility-date=2024-01-01
-
-      - name: Comment PR with Preview URL
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const previewUrl = `https://openheart-reactions-api.${process.env.GITHUB_HEAD_REF || 'preview'}.piyushjaipuriyar.workers.dev`;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 **Preview Deployment Ready!**
-              
-              Your changes have been deployed to a preview environment:
-              
-              **Preview URL:** ${previewUrl}
-              
-              **Test Endpoints:**
-              - GET: \`/reactions/test-post\`
-              - POST: \`/reactions/test-post\` (with JSON body: \`{"reaction": "heart"}\`)
-              
-              **Note:** This preview will automatically update with new commits to this PR.
-              
-              ✅ All tests passed • 🔍 Ready for review`
-            })
-
-  validate-wrangler-config:
-    name: Validate Wrangler Configuration
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Validate wrangler.toml
-        run: npx wrangler deploy --dry-run
+      # Uncomment when preview deployments are enabled:
+      # - name: Comment PR with Preview URL
+      #   if: github.event_name == 'pull_request' && steps.deploy-preview.conclusion == 'success'
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const branchName = context.payload.pull_request.head.ref.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      #       const previewUrl = `https://openheart-reactions-api.${branchName}.piyushjaipuriyar.workers.dev`;
+      #       
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: `🚀 **Preview Deployment Ready!**
+      #         
+      #         Your changes have been deployed to a preview environment:
+      #         
+      #         **Preview URL:** ${previewUrl}
+      #         
+      #         **Test Endpoints:**
+      #         - GET: \`/reactions/test-post\`
+      #         - POST: \`/reactions/test-post\` (with JSON body: \`{"reaction": "heart"}\`)
+      #         
+      #         **Note:** This preview will automatically update with new commits to this PR.
+      #         
+      #         ✅ All tests passed • 🔍 Ready for review`
+      #       })

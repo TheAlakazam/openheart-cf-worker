@@ -1,0 +1,299 @@
+{
+  "v": 1,
+  "name": "OpenHeart Reactions API",
+  "folders": [
+    {
+      "name": "Reactions",
+      "folders": [],
+      "requests": [
+        {
+          "name": "Get Reactions",
+          "method": "GET",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": null,
+            "body": null
+          }
+        },
+        {
+          "name": "Add Heart Reaction",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"heart\"\n}"
+          }
+        },
+        {
+          "name": "Add Lightbulb Reaction",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"lightbulb\"\n}"
+          }
+        },
+        {
+          "name": "Add Fire Reaction",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"fire\"\n}"
+          }
+        },
+        {
+          "name": "Add Thinking Reaction",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"thinking\"\n}"
+          }
+        },
+        {
+          "name": "Add Hundred Reaction",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"hundred\"\n}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rate Limiting Tests",
+      "folders": [],
+      "requests": [
+        {
+          "name": "Test Cooldown (Rapid Requests)",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/cooldown-test",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"heart\"\n}"
+          }
+        },
+        {
+          "name": "Test Daily Post Limit",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/daily-limit-test",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"heart\"\n}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error Cases",
+      "folders": [],
+      "requests": [
+        {
+          "name": "Invalid Reaction Type",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"invalid\"\n}"
+          }
+        },
+        {
+          "name": "Missing Content-Type",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"reaction\": \"heart\"\n}"
+          }
+        },
+        {
+          "name": "Invalid JSON",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{ invalid json }"
+          }
+        },
+        {
+          "name": "Empty Body",
+          "method": "POST",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "CORS",
+      "folders": [],
+      "requests": [
+        {
+          "name": "CORS Preflight",
+          "method": "OPTIONS",
+          "endpoint": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev/reactions/{{postSlug}}",
+          "params": [],
+          "headers": [
+            {
+              "key": "Access-Control-Request-Method",
+              "value": "POST"
+            },
+            {
+              "key": "Access-Control-Request-Headers",
+              "value": "Content-Type"
+            }
+          ],
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": null,
+            "body": null
+          }
+        }
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "name": "Production",
+      "variables": [
+        {
+          "key": "baseUrl",
+          "value": "https://openheart-reactions-api.piyushjaipuriyar.workers.dev"
+        },
+        {
+          "key": "postSlug",
+          "value": "test-post"
+        }
+      ]
+    },
+    {
+      "name": "Preview",
+      "variables": [
+        {
+          "key": "baseUrl",
+          "value": "https://openheart-reactions-api.{branch-name}.piyushjaipuriyar.workers.dev"
+        },
+        {
+          "key": "postSlug",
+          "value": "test-post"
+        }
+      ]
+    },
+    {
+      "name": "Local Development",
+      "variables": [
+        {
+          "key": "baseUrl",
+          "value": "http://localhost:8787"
+        },
+        {
+          "key": "postSlug",
+          "value": "test-post"
+        }
+      ]
+    }
+  ]
+}
