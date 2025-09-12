@@ -1,0 +1,20 @@
+name = "openheart-reactions-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# # KV namespaces - automatically configured
+[[kv_namespaces]]
+binding = "REACTIONS"
+id = "eb73182ac95c4925a5a4eb9e9af04aa1"
+preview_id = "84c8ad466db24188a13121e1ffb336bf"
+
+[[kv_namespaces]]
+binding = "RATE_LIMITS"
+id = "eda7d4647dfc4be28fcd676bf76b0299"
+preview_id = "dbad8515ac4644faae473181c5860da0"
+
+# Environment variables
+[vars]
+MAX_REACTIONS_PER_POST_PER_DAY = "3"
+MAX_REACTIONS_PER_IP_PER_HOUR = "10"
+REACTION_COOLDOWN_SECONDS = "0.5"

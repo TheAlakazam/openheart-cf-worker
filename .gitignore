@@ -110,6 +110,9 @@ dist
 # Serverless directories
 .serverless/
 
+# Wrangler directories
+.wrangler/
+
 # FuseBox cache
 .fusebox/
 
