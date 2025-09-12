@@ -25,19 +25,23 @@ echo "📦 Creating KV namespaces..."
 
 # Create production namespaces
 echo "Creating REACTIONS namespace..."
-REACTIONS_PROD=$(wrangler kv:namespace create "REACTIONS" --json | jq -r '.id')
+REACTIONS_OUTPUT=$(wrangler kv namespace create "REACTIONS")
+REACTIONS_PROD=$(echo "$REACTIONS_OUTPUT" | grep -o 'id = "[^"]*"' | cut -d '"' -f 2)
 echo "Production REACTIONS namespace ID: $REACTIONS_PROD"
 
 echo "Creating REACTIONS preview namespace..."
-REACTIONS_PREVIEW=$(wrangler kv:namespace create "REACTIONS" --preview --json | jq -r '.id')
+REACTIONS_PREVIEW_OUTPUT=$(wrangler kv namespace create "REACTIONS" --preview)
+REACTIONS_PREVIEW=$(echo "$REACTIONS_PREVIEW_OUTPUT" | grep -o 'preview_id = "[^"]*"' | cut -d '"' -f 2)
 echo "Preview REACTIONS namespace ID: $REACTIONS_PREVIEW"
 
 echo "Creating RATE_LIMITS namespace..."
-RATE_LIMITS_PROD=$(wrangler kv:namespace create "RATE_LIMITS" --json | jq -r '.id')
+RATE_LIMITS_OUTPUT=$(wrangler kv namespace create "RATE_LIMITS")
+RATE_LIMITS_PROD=$(echo "$RATE_LIMITS_OUTPUT" | grep -o 'id = "[^"]*"' | cut -d '"' -f 2)
 echo "Production RATE_LIMITS namespace ID: $RATE_LIMITS_PROD"
 
 echo "Creating RATE_LIMITS preview namespace..."
-RATE_LIMITS_PREVIEW=$(wrangler kv:namespace create "RATE_LIMITS" --preview --json | jq -r '.id')
+RATE_LIMITS_PREVIEW_OUTPUT=$(wrangler kv namespace create "RATE_LIMITS" --preview)
+RATE_LIMITS_PREVIEW=$(echo "$RATE_LIMITS_PREVIEW_OUTPUT" | grep -o 'preview_id = "[^"]*"' | cut -d '"' -f 2)
 echo "Preview RATE_LIMITS namespace ID: $RATE_LIMITS_PREVIEW"
 
 echo ""

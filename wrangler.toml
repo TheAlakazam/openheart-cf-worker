@@ -2,24 +2,16 @@ name = "openheart-reactions-api"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
-# KV namespaces - MUST be configured before deployment
-# Run these commands to create namespaces:
-#   wrangler kv:namespace create "REACTIONS"
-#   wrangler kv:namespace create "REACTIONS" --preview
-#   wrangler kv:namespace create "RATE_LIMITS"  
-#   wrangler kv:namespace create "RATE_LIMITS" --preview
-# Then replace the IDs below with the output from those commands
+# # KV namespaces - automatically configured
+[[kv_namespaces]]
+binding = "REACTIONS"
+id = "eb73182ac95c4925a5a4eb9e9af04aa1"
+preview_id = "84c8ad466db24188a13121e1ffb336bf"
 
-# Uncomment and update with your actual namespace IDs:
-# [[kv_namespaces]]
-# binding = "REACTIONS"
-# id = "your-production-reactions-namespace-id"
-# preview_id = "your-preview-reactions-namespace-id"
-
-# [[kv_namespaces]]
-# binding = "RATE_LIMITS"
-# id = "your-production-rate-limits-namespace-id"
-# preview_id = "your-preview-rate-limits-namespace-id"
+[[kv_namespaces]]
+binding = "RATE_LIMITS"
+id = "eda7d4647dfc4be28fcd676bf76b0299"
+preview_id = "dbad8515ac4644faae473181c5860da0"
 
 # Environment variables
 [vars]
