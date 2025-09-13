@@ -199,7 +199,7 @@ describe('RateLimiter', () => {
           windowStart: MOCK_NOW,
           lastRequest: MOCK_NOW,
         }),
-        { expirationTtl: 2 } // 2 seconds TTL
+        { expirationTtl: 60 } // 60 seconds TTL (KV minimum)
       );
 
       // Verify post rate update (2nd call)

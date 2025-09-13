@@ -1,8 +1,8 @@
 # OpenHeart Reaction System - Cloudflare Worker API
 
-[![Tests](https://github.com/piyushjaipuriyar/openheart-cf-worker/actions/workflows/test.yml/badge.svg)](https://github.com/piyushjaipuriyar/openheart-cf-worker/actions/workflows/test.yml)
-[![Deploy](https://github.com/piyushjaipuriyar/openheart-cf-worker/actions/workflows/deploy.yml/badge.svg)](https://github.com/piyushjaipuriyar/openheart-cf-worker/actions/workflows/deploy.yml)
-[![Coverage](https://img.shields.io/badge/coverage-87%25-brightgreen)](https://github.com/piyushjaipuriyar/openheart-cf-worker)
+[![Tests](https://github.com/TheAlakazam/openheart-cf-worker/actions/workflows/test.yml/badge.svg)](https://github.com/TheAlakazam/openheart-cf-worker/actions/workflows/test.yml)
+[![Deploy](https://github.com/TheAlakazam/openheart-cf-worker/actions/workflows/deploy.yml/badge.svg)](https://github.com/TheAlakazam/openheart-cf-worker/actions/workflows/deploy.yml)
+[![Coverage](https://img.shields.io/badge/coverage-87%25-brightgreen)](https://github.com/TheAlakazam/openheart-cf-worker)
 
 A high-performance serverless API for managing post reactions built with Cloudflare Workers and KV storage.
 
@@ -29,7 +29,7 @@ A high-performance serverless API for managing post reactions built with Cloudfl
 
 - **Per Post**: 3 reactions per post per IP per day
 - **Global**: 10 reactions per IP per hour globally  
-- **Cooldown**: 0.5-second cooldown between reactions
+- **Cooldown**: 0.5-second cooldown between reactions (tracked for 60 seconds)
 
 ## API Endpoints
 
