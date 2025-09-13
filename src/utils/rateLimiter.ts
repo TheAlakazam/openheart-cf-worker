@@ -114,7 +114,7 @@ export class RateLimiter {
       lastRequest: now,
     };
     
-    await this.kvUtils.updateRateLimit(cooldownKey, data, 2);
+    await this.kvUtils.updateRateLimit(cooldownKey, data, 60);
   }
 
   private async updatePostRateLimit(ip: string, postSlug: string, now: number): Promise<void> {
